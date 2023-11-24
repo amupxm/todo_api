@@ -12,6 +12,18 @@ on:
 jobs:
 
   build:
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: 1234
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -38,15 +50,3 @@ jobs:
 
     - name: Test
       run: go test -v ./...
-services:
-  postgres:
-    image: postgres
-    ports:
-      - 5432:5432
-    env:
-      POSTGRES_PASSWORD: 1234
-    options: >-
-      --health-cmd pg_isready
-      --health-interval 10s
-      --health-timeout 5s
-      --health-retries 5
