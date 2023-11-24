@@ -11,22 +11,22 @@ import (
 )
 
 const createTodo = `-- name: CreateTodo :one
-INSERT INTO todos (task , parent_id)
+INSERT INTO todos (title,task)
 VALUES ($1, $2)
-RETURNING id, parent_id, task, completed, due_date, created_at, updated_at, deleted_at
+RETURNING id, title, task, completed, due_date, created_at, updated_at, deleted_at
 `
 
 type CreateTodoParams struct {
-	Task     string
-	ParentID sql.NullInt32
+	Title string
+	Task  sql.NullString
 }
 
 func (q *Queries) CreateTodo(ctx context.Context, arg CreateTodoParams) (Todo, error) {
-	row := q.queryRow(ctx, q.createTodoStmt, createTodo, arg.Task, arg.ParentID)
+	row := q.queryRow(ctx, q.createTodoStmt, createTodo, arg.Title, arg.Task)
 	var i Todo
 	err := row.Scan(
 		&i.ID,
-		&i.ParentID,
+		&i.Title,
 		&i.Task,
 		&i.Completed,
 		&i.DueDate,
@@ -48,7 +48,7 @@ func (q *Queries) DeleteTodo(ctx context.Context, id int32) error {
 }
 
 const getTodoByID = `-- name: GetTodoByID :one
-SELECT id, parent_id, task, completed, due_date, created_at, updated_at, deleted_at FROM todos
+SELECT id, title, task, completed, due_date, created_at, updated_at, deleted_at FROM todos
 WHERE id = $1 LIMIT 1
 `
 
@@ -57,7 +57,7 @@ func (q *Queries) GetTodoByID(ctx context.Context, id int32) (Todo, error) {
 	var i Todo
 	err := row.Scan(
 		&i.ID,
-		&i.ParentID,
+		&i.Title,
 		&i.Task,
 		&i.Completed,
 		&i.DueDate,
@@ -69,7 +69,7 @@ func (q *Queries) GetTodoByID(ctx context.Context, id int32) (Todo, error) {
 }
 
 const listTodos = `-- name: ListTodos :many
-SELECT id, parent_id, task, completed, due_date, created_at, updated_at, deleted_at FROM todos
+SELECT id, title, task, completed, due_date, created_at, updated_at, deleted_at FROM todos
 ORDER BY id
 LIMIT $1
 OFFSET $2
@@ -91,7 +91,7 @@ func (q *Queries) ListTodos(ctx context.Context, arg ListTodosParams) ([]Todo, e
 		var i Todo
 		if err := rows.Scan(
 			&i.ID,
-			&i.ParentID,
+			&i.Title,
 			&i.Task,
 			&i.Completed,
 			&i.DueDate,
@@ -116,7 +116,7 @@ const toggleTodo = `-- name: ToggleTodo :one
 UPDATE todos
 SET completed = NOT completed
 WHERE id = $1
-RETURNING id, parent_id, task, completed, due_date, created_at, updated_at, deleted_at
+RETURNING id, title, task, completed, due_date, created_at, updated_at, deleted_at
 `
 
 func (q *Queries) ToggleTodo(ctx context.Context, id int32) (Todo, error) {
@@ -124,7 +124,7 @@ func (q *Queries) ToggleTodo(ctx context.Context, id int32) (Todo, error) {
 	var i Todo
 	err := row.Scan(
 		&i.ID,
-		&i.ParentID,
+		&i.Title,
 		&i.Task,
 		&i.Completed,
 		&i.DueDate,
@@ -137,22 +137,24 @@ func (q *Queries) ToggleTodo(ctx context.Context, id int32) (Todo, error) {
 
 const updateTodo = `-- name: UpdateTodo :one
 UPDATE todos
-SET task = $2
+SET title = $2
+, task = $3
 WHERE id = $1
-RETURNING id, parent_id, task, completed, due_date, created_at, updated_at, deleted_at
+RETURNING id, title, task, completed, due_date, created_at, updated_at, deleted_at
 `
 
 type UpdateTodoParams struct {
-	ID   int32
-	Task string
+	ID    int32
+	Title string
+	Task  sql.NullString
 }
 
 func (q *Queries) UpdateTodo(ctx context.Context, arg UpdateTodoParams) (Todo, error) {
-	row := q.queryRow(ctx, q.updateTodoStmt, updateTodo, arg.ID, arg.Task)
+	row := q.queryRow(ctx, q.updateTodoStmt, updateTodo, arg.ID, arg.Title, arg.Task)
 	var i Todo
 	err := row.Scan(
 		&i.ID,
-		&i.ParentID,
+		&i.Title,
 		&i.Task,
 		&i.Completed,
 		&i.DueDate,

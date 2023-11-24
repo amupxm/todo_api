@@ -9,13 +9,14 @@ LIMIT $1
 OFFSET $2;
 
 -- name: CreateTodo :one
-INSERT INTO todos (task , parent_id)
+INSERT INTO todos (title,task)
 VALUES ($1, $2)
 RETURNING *;
 
 -- name: UpdateTodo :one
 UPDATE todos
-SET task = $2
+SET title = $2
+, task = $3
 WHERE id = $1
 RETURNING *;
 

@@ -10,8 +10,8 @@ import (
 
 type Todo struct {
 	ID        int32
-	ParentID  sql.NullInt32
-	Task      string
+	Title     string
+	Task      sql.NullString
 	Completed sql.NullBool
 	DueDate   sql.NullTime
 	CreatedAt sql.NullTime
