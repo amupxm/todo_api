@@ -13,6 +13,8 @@ jobs:
           - 5432:5432
         env:
           POSTGRES_PASSWORD: 1234
+          POSTGRES_USER: root
+          POSTGRES_DB: todos
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -35,9 +37,6 @@ jobs:
         curl -L https://github.com/golang-migrate/migrate/releases/download/v4.16.2/migrate.linux-amd64.tar.gz | tar xvz
         sudo mv migrate /usr/bin/migrate
         which migrate
-
-    - name: createDB
-      run: make createdb
 
     - name: migrateUp
       run: make migrate
