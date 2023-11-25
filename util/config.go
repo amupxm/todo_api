@@ -11,8 +11,7 @@ import (
 var configName = "devConfig"
 
 func init() {
-	flag.StringVar(&configName, "devConfig", "devConfig", "config file name without extension")
-	flag.Parse()
+	flag.StringVar(&configName, "config", "devConfig", "config file name without extension")
 }
 
 type Cfg struct {

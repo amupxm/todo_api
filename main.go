@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"flag"
 	"log"
 
 	"github.com/amupxm/todo_api/api"
@@ -11,6 +12,7 @@ import (
 )
 
 func main() {
+	flag.Parse()
 	util.LoadConfig()
 	conn, err := sql.Open("postgres", util.GetDatabaseConnectionString())
 	if err != nil {
