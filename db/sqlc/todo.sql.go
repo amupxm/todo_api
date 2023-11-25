@@ -10,7 +10,7 @@ import (
 	"database/sql"
 )
 
-const createTodo = `-- name: CreateTodo :one
+const CreateTodo = `-- name: CreateTodo :one
 INSERT INTO todos (title,task)
 VALUES ($1, $2)
 RETURNING id, title, task, completed, due_date, created_at, updated_at, deleted_at
@@ -22,7 +22,7 @@ type CreateTodoParams struct {
 }
 
 func (q *Queries) CreateTodo(ctx context.Context, arg CreateTodoParams) (Todo, error) {
-	row := q.queryRow(ctx, q.createTodoStmt, createTodo, arg.Title, arg.Task)
+	row := q.queryRow(ctx, q.createTodoStmt, CreateTodo, arg.Title, arg.Task)
 	var i Todo
 	err := row.Scan(
 		&i.ID,
@@ -37,23 +37,23 @@ func (q *Queries) CreateTodo(ctx context.Context, arg CreateTodoParams) (Todo, e
 	return i, err
 }
 
-const deleteTodo = `-- name: DeleteTodo :exec
+const DeleteTodo = `-- name: DeleteTodo :exec
 DELETE FROM todos
 WHERE id = $1
 `
 
 func (q *Queries) DeleteTodo(ctx context.Context, id int32) error {
-	_, err := q.exec(ctx, q.deleteTodoStmt, deleteTodo, id)
+	_, err := q.exec(ctx, q.deleteTodoStmt, DeleteTodo, id)
 	return err
 }
 
-const getTodoByID = `-- name: GetTodoByID :one
+const GetTodoByID = `-- name: GetTodoByID :one
 SELECT id, title, task, completed, due_date, created_at, updated_at, deleted_at FROM todos
 WHERE id = $1 LIMIT 1
 `
 
 func (q *Queries) GetTodoByID(ctx context.Context, id int32) (Todo, error) {
-	row := q.queryRow(ctx, q.getTodoByIDStmt, getTodoByID, id)
+	row := q.queryRow(ctx, q.getTodoByIDStmt, GetTodoByID, id)
 	var i Todo
 	err := row.Scan(
 		&i.ID,
@@ -68,7 +68,7 @@ func (q *Queries) GetTodoByID(ctx context.Context, id int32) (Todo, error) {
 	return i, err
 }
 
-const listTodos = `-- name: ListTodos :many
+const ListTodos = `-- name: ListTodos :many
 SELECT id, title, task, completed, due_date, created_at, updated_at, deleted_at FROM todos
 ORDER BY id
 LIMIT $1
@@ -81,12 +81,12 @@ type ListTodosParams struct {
 }
 
 func (q *Queries) ListTodos(ctx context.Context, arg ListTodosParams) ([]Todo, error) {
-	rows, err := q.query(ctx, q.listTodosStmt, listTodos, arg.Limit, arg.Offset)
+	rows, err := q.query(ctx, q.listTodosStmt, ListTodos, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Todo
+	items := []Todo{}
 	for rows.Next() {
 		var i Todo
 		if err := rows.Scan(
@@ -112,7 +112,7 @@ func (q *Queries) ListTodos(ctx context.Context, arg ListTodosParams) ([]Todo, e
 	return items, nil
 }
 
-const toggleTodo = `-- name: ToggleTodo :one
+const ToggleTodo = `-- name: ToggleTodo :one
 UPDATE todos
 SET completed = NOT completed
 WHERE id = $1
@@ -120,7 +120,7 @@ RETURNING id, title, task, completed, due_date, created_at, updated_at, deleted_
 `
 
 func (q *Queries) ToggleTodo(ctx context.Context, id int32) (Todo, error) {
-	row := q.queryRow(ctx, q.toggleTodoStmt, toggleTodo, id)
+	row := q.queryRow(ctx, q.toggleTodoStmt, ToggleTodo, id)
 	var i Todo
 	err := row.Scan(
 		&i.ID,
@@ -135,7 +135,7 @@ func (q *Queries) ToggleTodo(ctx context.Context, id int32) (Todo, error) {
 	return i, err
 }
 
-const updateTodo = `-- name: UpdateTodo :one
+const UpdateTodo = `-- name: UpdateTodo :one
 UPDATE todos
 SET title = $2
 , task = $3
@@ -150,7 +150,7 @@ type UpdateTodoParams struct {
 }
 
 func (q *Queries) UpdateTodo(ctx context.Context, arg UpdateTodoParams) (Todo, error) {
-	row := q.queryRow(ctx, q.updateTodoStmt, updateTodo, arg.ID, arg.Title, arg.Task)
+	row := q.queryRow(ctx, q.updateTodoStmt, UpdateTodo, arg.ID, arg.Title, arg.Task)
 	var i Todo
 	err := row.Scan(
 		&i.ID,

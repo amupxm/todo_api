@@ -24,22 +24,22 @@ func New(db DBTX) *Queries {
 func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	q := Queries{db: db}
 	var err error
-	if q.createTodoStmt, err = db.PrepareContext(ctx, createTodo); err != nil {
+	if q.createTodoStmt, err = db.PrepareContext(ctx, CreateTodo); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateTodo: %w", err)
 	}
-	if q.deleteTodoStmt, err = db.PrepareContext(ctx, deleteTodo); err != nil {
+	if q.deleteTodoStmt, err = db.PrepareContext(ctx, DeleteTodo); err != nil {
 		return nil, fmt.Errorf("error preparing query DeleteTodo: %w", err)
 	}
-	if q.getTodoByIDStmt, err = db.PrepareContext(ctx, getTodoByID); err != nil {
+	if q.getTodoByIDStmt, err = db.PrepareContext(ctx, GetTodoByID); err != nil {
 		return nil, fmt.Errorf("error preparing query GetTodoByID: %w", err)
 	}
-	if q.listTodosStmt, err = db.PrepareContext(ctx, listTodos); err != nil {
+	if q.listTodosStmt, err = db.PrepareContext(ctx, ListTodos); err != nil {
 		return nil, fmt.Errorf("error preparing query ListTodos: %w", err)
 	}
-	if q.toggleTodoStmt, err = db.PrepareContext(ctx, toggleTodo); err != nil {
+	if q.toggleTodoStmt, err = db.PrepareContext(ctx, ToggleTodo); err != nil {
 		return nil, fmt.Errorf("error preparing query ToggleTodo: %w", err)
 	}
-	if q.updateTodoStmt, err = db.PrepareContext(ctx, updateTodo); err != nil {
+	if q.updateTodoStmt, err = db.PrepareContext(ctx, UpdateTodo); err != nil {
 		return nil, fmt.Errorf("error preparing query UpdateTodo: %w", err)
 	}
 	return &q, nil
