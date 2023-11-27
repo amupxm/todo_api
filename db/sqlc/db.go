@@ -27,11 +27,23 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.createTodoStmt, err = db.PrepareContext(ctx, CreateTodo); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateTodo: %w", err)
 	}
+	if q.createUserStmt, err = db.PrepareContext(ctx, CreateUser); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateUser: %w", err)
+	}
 	if q.deleteTodoStmt, err = db.PrepareContext(ctx, DeleteTodo); err != nil {
 		return nil, fmt.Errorf("error preparing query DeleteTodo: %w", err)
 	}
+	if q.deleteUserStmt, err = db.PrepareContext(ctx, DeleteUser); err != nil {
+		return nil, fmt.Errorf("error preparing query DeleteUser: %w", err)
+	}
 	if q.getTodoByIDStmt, err = db.PrepareContext(ctx, GetTodoByID); err != nil {
 		return nil, fmt.Errorf("error preparing query GetTodoByID: %w", err)
+	}
+	if q.getTodosByUserStmt, err = db.PrepareContext(ctx, GetTodosByUser); err != nil {
+		return nil, fmt.Errorf("error preparing query GetTodosByUser: %w", err)
+	}
+	if q.getUserStmt, err = db.PrepareContext(ctx, GetUser); err != nil {
+		return nil, fmt.Errorf("error preparing query GetUser: %w", err)
 	}
 	if q.listTodosStmt, err = db.PrepareContext(ctx, ListTodos); err != nil {
 		return nil, fmt.Errorf("error preparing query ListTodos: %w", err)
@@ -41,6 +53,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	}
 	if q.updateTodoStmt, err = db.PrepareContext(ctx, UpdateTodo); err != nil {
 		return nil, fmt.Errorf("error preparing query UpdateTodo: %w", err)
+	}
+	if q.updateUserStmt, err = db.PrepareContext(ctx, UpdateUser); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateUser: %w", err)
 	}
 	return &q, nil
 }
@@ -52,14 +67,34 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing createTodoStmt: %w", cerr)
 		}
 	}
+	if q.createUserStmt != nil {
+		if cerr := q.createUserStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createUserStmt: %w", cerr)
+		}
+	}
 	if q.deleteTodoStmt != nil {
 		if cerr := q.deleteTodoStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing deleteTodoStmt: %w", cerr)
 		}
 	}
+	if q.deleteUserStmt != nil {
+		if cerr := q.deleteUserStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing deleteUserStmt: %w", cerr)
+		}
+	}
 	if q.getTodoByIDStmt != nil {
 		if cerr := q.getTodoByIDStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getTodoByIDStmt: %w", cerr)
+		}
+	}
+	if q.getTodosByUserStmt != nil {
+		if cerr := q.getTodosByUserStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getTodosByUserStmt: %w", cerr)
+		}
+	}
+	if q.getUserStmt != nil {
+		if cerr := q.getUserStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getUserStmt: %w", cerr)
 		}
 	}
 	if q.listTodosStmt != nil {
@@ -75,6 +110,11 @@ func (q *Queries) Close() error {
 	if q.updateTodoStmt != nil {
 		if cerr := q.updateTodoStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing updateTodoStmt: %w", cerr)
+		}
+	}
+	if q.updateUserStmt != nil {
+		if cerr := q.updateUserStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateUserStmt: %w", cerr)
 		}
 	}
 	return err
@@ -114,25 +154,35 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db              DBTX
-	tx              *sql.Tx
-	createTodoStmt  *sql.Stmt
-	deleteTodoStmt  *sql.Stmt
-	getTodoByIDStmt *sql.Stmt
-	listTodosStmt   *sql.Stmt
-	toggleTodoStmt  *sql.Stmt
-	updateTodoStmt  *sql.Stmt
+	db                 DBTX
+	tx                 *sql.Tx
+	createTodoStmt     *sql.Stmt
+	createUserStmt     *sql.Stmt
+	deleteTodoStmt     *sql.Stmt
+	deleteUserStmt     *sql.Stmt
+	getTodoByIDStmt    *sql.Stmt
+	getTodosByUserStmt *sql.Stmt
+	getUserStmt        *sql.Stmt
+	listTodosStmt      *sql.Stmt
+	toggleTodoStmt     *sql.Stmt
+	updateTodoStmt     *sql.Stmt
+	updateUserStmt     *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:              tx,
-		tx:              tx,
-		createTodoStmt:  q.createTodoStmt,
-		deleteTodoStmt:  q.deleteTodoStmt,
-		getTodoByIDStmt: q.getTodoByIDStmt,
-		listTodosStmt:   q.listTodosStmt,
-		toggleTodoStmt:  q.toggleTodoStmt,
-		updateTodoStmt:  q.updateTodoStmt,
+		db:                 tx,
+		tx:                 tx,
+		createTodoStmt:     q.createTodoStmt,
+		createUserStmt:     q.createUserStmt,
+		deleteTodoStmt:     q.deleteTodoStmt,
+		deleteUserStmt:     q.deleteUserStmt,
+		getTodoByIDStmt:    q.getTodoByIDStmt,
+		getTodosByUserStmt: q.getTodosByUserStmt,
+		getUserStmt:        q.getUserStmt,
+		listTodosStmt:      q.listTodosStmt,
+		toggleTodoStmt:     q.toggleTodoStmt,
+		updateTodoStmt:     q.updateTodoStmt,
+		updateUserStmt:     q.updateUserStmt,
 	}
 }

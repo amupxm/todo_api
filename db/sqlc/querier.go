@@ -6,15 +6,21 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
 type Querier interface {
 	CreateTodo(ctx context.Context, arg CreateTodoParams) (Todo, error)
+	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteTodo(ctx context.Context, id int32) error
+	DeleteUser(ctx context.Context, id int32) (User, error)
 	GetTodoByID(ctx context.Context, id int32) (Todo, error)
+	GetTodosByUser(ctx context.Context, userID sql.NullInt32) ([]Todo, error)
+	GetUser(ctx context.Context, id int32) (User, error)
 	ListTodos(ctx context.Context, arg ListTodosParams) ([]Todo, error)
 	ToggleTodo(ctx context.Context, id int32) (Todo, error)
 	UpdateTodo(ctx context.Context, arg UpdateTodoParams) (Todo, error)
+	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 }
 
 var _ Querier = (*Queries)(nil)
