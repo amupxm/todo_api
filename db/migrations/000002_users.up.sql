@@ -11,5 +11,5 @@ CREATE TABLE Users (
 );
 
 -- insert a feild to todos
-ALTER TABLE Todos ADD COLUMN user_id INTEGER;
+ALTER TABLE Todos ADD COLUMN user_id INTEGER NOT NULL;
 ALTER TABLE Todos ADD FOREIGN KEY (user_id) REFERENCES Users(id);

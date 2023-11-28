@@ -17,7 +17,7 @@ type Todo struct {
 	CreatedAt sql.NullTime
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
-	UserID    sql.NullInt32
+	UserID    int32
 }
 
 type User struct {

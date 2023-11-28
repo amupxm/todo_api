@@ -17,7 +17,7 @@ RETURNING id, title, task, completed, due_date, created_at, updated_at, deleted_
 `
 
 type CreateTodoParams struct {
-	UserID sql.NullInt32
+	UserID int32
 	Title  string
 	Task   sql.NullString
 }
@@ -142,7 +142,7 @@ FROM todos
 WHERE user_id = $1 AND deleted_at IS NULL
 `
 
-func (q *Queries) GetTodosByUser(ctx context.Context, userID sql.NullInt32) ([]Todo, error) {
+func (q *Queries) GetTodosByUser(ctx context.Context, userID int32) ([]Todo, error) {
 	rows, err := q.query(ctx, q.getTodosByUserStmt, GetTodosByUser, userID)
 	if err != nil {
 		return nil, err

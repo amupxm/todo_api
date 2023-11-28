@@ -6,7 +6,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
 type Querier interface {
@@ -15,7 +14,7 @@ type Querier interface {
 	DeleteTodo(ctx context.Context, id int32) error
 	DeleteUser(ctx context.Context, id int32) (User, error)
 	GetTodoByID(ctx context.Context, id int32) (Todo, error)
-	GetTodosByUser(ctx context.Context, userID sql.NullInt32) ([]Todo, error)
+	GetTodosByUser(ctx context.Context, userID int32) ([]Todo, error)
 	GetUser(ctx context.Context, id int32) (User, error)
 	ListTodos(ctx context.Context, arg ListTodosParams) ([]Todo, error)
 	ToggleTodo(ctx context.Context, id int32) (Todo, error)
