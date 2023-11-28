@@ -1,14 +1,12 @@
 package db
 
 import (
-	"context"
 	"database/sql"
 	"log"
 	"os"
 	"testing"
 
 	_ "github.com/lib/pq"
-	"github.com/stretchr/testify/require"
 )
 
 var testQuery *Queries
@@ -31,13 +29,4 @@ func TestMain(m *testing.M) {
 
 	// Exit with the combined exit code
 	os.Exit(exitCode)
-}
-func TestToggleTodo(t *testing.T) {
-	todo := createTodoInDB(t)
-	todo2, err := testQuery.ToggleTodo(
-		context.Background(),
-		todo.ID,
-	)
-	require.NoError(t, err)
-	require.Equal(t, todo.Completed.Bool, !(todo2.Completed.Bool))
 }
